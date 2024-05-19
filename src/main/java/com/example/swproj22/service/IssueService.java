@@ -93,7 +93,7 @@ public class IssueService {
         //String user = userJpaRepository.findByNickname(issueMangerChangeRequest.getNickname());
         //String userRole = user.getRole();
         String userRole = issueMangerChangeRequest.getNickname(); //user구현되면 지울것
-        
+
         if (!userRole.equals("PL")) {
             throw new IllegalStateException("Only users with 'PL' role can change assignee.");
         }
