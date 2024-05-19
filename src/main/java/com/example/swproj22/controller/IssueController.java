@@ -35,7 +35,7 @@ public class IssueController {
         }
     }
 
-    @PutMapping("/editcode/{issueId}")
+    @PutMapping("/editCode/{issueId}")
     public ResponseEntity<String> editIssueCode(@PathVariable Long issueId, @RequestBody IssueEditCodeRequest editCodeRequest) {
         try {
             issueService.editIssueCode(issueId, editCodeRequest);
@@ -45,7 +45,7 @@ public class IssueController {
         }
     }
 
-    @PutMapping("/status/{issueId}")
+    @PutMapping("/changeStatus/{issueId}")
     public ResponseEntity<String> changeIssueStatus(@PathVariable Long issueId, @RequestBody IssueStatusChangeRequest statusChangeRequest) {
         try {
             Issue changedIssue = issueService.changeIssueStatus(issueId, statusChangeRequest);
@@ -55,7 +55,7 @@ public class IssueController {
         }
     }
 
-    @PutMapping("/stAssigned/{issueId}")
+    @PutMapping("/changeAssigned/{issueId}")
     public ResponseEntity<String> changeIssueAssigned(@PathVariable Long issueId) {
         try {
             Issue changedIssue = issueService.changeIssueAssigned(issueId);
@@ -65,7 +65,7 @@ public class IssueController {
         }
     }
 
-    @PutMapping("/assignee/{issueId}")
+    @PutMapping("/changeAssignee/{issueId}")
     public ResponseEntity<String> changeIssueAssignee(@PathVariable Long issueId, @RequestBody IssueMangerChangeRequest issueMangerChangeRequest) {
         try {
             Issue changedIssue = issueService.changeIssueAssignee(issueId, issueMangerChangeRequest);
@@ -75,7 +75,7 @@ public class IssueController {
         }
     }
 
-    @PutMapping("/fixer/{issueId}")
+    @PutMapping("/changeFixer/{issueId}")
     public ResponseEntity<String> changeIssueFixer(@PathVariable Long issueId) {
         try {
             Issue changedIssue = issueService.changeIssueFixer(issueId);
