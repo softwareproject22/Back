@@ -30,6 +30,7 @@ public class IssueService {
                 .code(issueCreateRequest.getCode())
                 .status("new")
                 .reporter(issueCreateRequest.getReporter())
+                .priority(issueCreateRequest.getPriority())
                 .tags(issueCreateRequest.getTags())
                 .reportedTime(LocalDateTime.now())
                 .build();
@@ -116,8 +117,14 @@ public class IssueService {
     public List<Issue> searchByState(Long projectId, String state) {
         return issueJpaRepository.findByProjectIdAndStatus(projectId, state);
     }
-//    public List<Issue> getIssuesByReporterAndProject(Long projectId, String reporter) {
-//        return issueJpaRepository.findByProjectIdAndReporter(projectId, reporter);
-//    }
+
+    public List<Issue> getIssuesByProjectAndReporter(Long projectId, String reporter) {
+        return issueJpaRepository.findByProjectIdAndReporter(projectId, reporter);
+    }
+    public List<Issue> getIssuesByProjectAndAssignee(Long projectId, String reporter) {
+        return issueJpaRepository.findByProjectIdAndAssignee(projectId, reporter);
+    }
+
+
 
 }
