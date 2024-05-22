@@ -30,6 +30,7 @@ public class IssueService {
                 .code(issueCreateRequest.getCode())
                 .status("new")
                 .reporter(issueCreateRequest.getReporter())
+                .priority(issueCreateRequest.getPriority())
                 .tags(issueCreateRequest.getTags())
                 .reportedTime(LocalDateTime.now())
                 .build();

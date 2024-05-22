@@ -34,6 +34,8 @@ public class Issue {
     private String assignee;
     private String fixer;
 
+    private String priority;
+
     @ElementCollection
     private List<String> tags;
 
