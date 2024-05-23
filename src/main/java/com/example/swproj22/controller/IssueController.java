@@ -95,10 +95,30 @@ public class IssueController {
         }
     }
 
-    @GetMapping("/search/{projectId}/{state}")
+    @GetMapping("/searchByState/{projectId}/{state}")
     public ResponseEntity<List<Issue>> searchByState(@PathVariable Long projectId, @PathVariable String state) {
         try {
             List<Issue> issues = issueService.searchByState(projectId, state);
+            return ResponseEntity.ok(issues);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/searchByReporter/{projectId}/{reporter}")
+    public ResponseEntity<List<Issue>> getIssuesByProjectAndReporter(@PathVariable Long projectId, @PathVariable String reporter) {
+        try {
+            List<Issue> issues = issueService.getIssuesByProjectAndReporter(projectId, reporter);
+            return ResponseEntity.ok(issues);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/searchByAssignee/{projectId}/{assignee}")
+    public ResponseEntity<List<Issue>> getIssuesByProjectAndAssignee(@PathVariable Long projectId, @PathVariable String assignee) {
+        try {
+            List<Issue> issues = issueService.getIssuesByProjectAndAssignee(projectId, assignee);
             return ResponseEntity.ok(issues);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
