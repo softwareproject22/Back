@@ -5,6 +5,7 @@ import lombok.*;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -36,10 +37,15 @@ public class Issue {
 
     private String priority;
 
-    @ElementCollection
-    private List<String> tags;
-
     private LocalDateTime reportedTime;
 
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "tagging",
+            joinColumns = @JoinColumn(name = "issue_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    @Builder.Default
+    private List<Tag> tags = new ArrayList<>();
 }
