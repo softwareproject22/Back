@@ -35,8 +35,7 @@ public class Issue {
     private String assignee;
     private String fixer;
 
-    //@ElementCollection
-    //private List<String> tags;
+    private String priority;
 
     private LocalDateTime reportedTime;
 

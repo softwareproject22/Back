@@ -27,6 +27,9 @@ public class IssueCreateRequest {
     @NotNull
     private String reporter;
 
+    @NotBlank
+    private  String priority;
+
     private List<Long> tags;
 
 
