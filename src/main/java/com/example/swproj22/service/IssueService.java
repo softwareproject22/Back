@@ -1,28 +1,40 @@
 package com.example.swproj22.service;
 
 import com.example.swproj22.domain.Issue;
+import com.example.swproj22.domain.Tag;
 import com.example.swproj22.dto.IssueCreateRequest;
 import com.example.swproj22.dto.IssueEditCodeRequest;
 import com.example.swproj22.dto.IssueMangerChangeRequest;
 import com.example.swproj22.dto.IssueStatusChangeRequest;
 import com.example.swproj22.repository.IssueJpaRepository;
+import com.example.swproj22.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class IssueService {
 
     private final IssueJpaRepository issueJpaRepository;
+    private final TagRepository tagRepository;
 
     @Autowired
-    public IssueService(IssueJpaRepository issueJpaRepository) {
+    public IssueService(IssueJpaRepository issueJpaRepository, TagRepository tagRepository) {
         this.issueJpaRepository = issueJpaRepository;
+        this.tagRepository = tagRepository;
     }
 
     public Issue createIssue(IssueCreateRequest issueCreateRequest) {
+        List<Tag> tags = issueCreateRequest.getTags().stream()
+                .map(tagId -> tagRepository.findById(tagId).orElseThrow(() -> new RuntimeException("Tag not found with id: " + tagId)))
+                .collect(Collectors.toList());
+
         Issue issue = Issue.builder()
                 .projectId(issueCreateRequest.getProjectId())
                 .title(issueCreateRequest.getTitle())
@@ -30,8 +42,8 @@ public class IssueService {
                 .code(issueCreateRequest.getCode())
                 .status("new")
                 .reporter(issueCreateRequest.getReporter())
+                .tags(tags)
                 .priority(issueCreateRequest.getPriority())
-                .tags(issueCreateRequest.getTags())
                 .reportedTime(LocalDateTime.now())
                 .build();
 
@@ -125,6 +137,12 @@ public class IssueService {
         return issueJpaRepository.findByProjectIdAndAssignee(projectId, reporter);
     }
 
-
+    public Map<LocalDate, Long> countIssuesByDay(Long projectId){
+        return issueJpaRepository.findByProjectId(projectId).stream()
+                .collect(Collectors.groupingBy(
+                        issue -> issue.getReportedTime().toLocalDate(),
+                        Collectors.counting()
+                ));
+    }
 
 }

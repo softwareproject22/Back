@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Builder
 public class IssueCreateRequest {
-    @NotBlank
+    @NotNull
     private Long projectId;
 
     @NotBlank
@@ -29,7 +29,7 @@ public class IssueCreateRequest {
     @NotNull
     private String reporter;
 
-    private List<String> tags;
+    private List<Long> tags;
 
 
 }
