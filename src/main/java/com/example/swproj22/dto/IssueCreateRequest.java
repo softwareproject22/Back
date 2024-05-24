@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Builder
 public class IssueCreateRequest {
-    @NotBlank
+    @NotNull
     private Long projectId;
 
     @NotBlank
