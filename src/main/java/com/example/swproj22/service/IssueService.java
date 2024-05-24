@@ -2,12 +2,15 @@ package com.example.swproj22.service;
 
 import com.example.swproj22.domain.Issue;
 import com.example.swproj22.domain.Tag;
+import com.example.swproj22.domain.UserRole;
+import com.example.swproj22.domain.entity.User;
 import com.example.swproj22.dto.IssueCreateRequest;
 import com.example.swproj22.dto.IssueEditCodeRequest;
 import com.example.swproj22.dto.IssueMangerChangeRequest;
 import com.example.swproj22.dto.IssueStatusChangeRequest;
 import com.example.swproj22.repository.IssueJpaRepository;
 import com.example.swproj22.repository.TagRepository;
+import com.example.swproj22.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +26,15 @@ public class IssueService {
 
     private final IssueJpaRepository issueJpaRepository;
     private final TagRepository tagRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public IssueService(IssueJpaRepository issueJpaRepository, TagRepository tagRepository) {
+    public IssueService(IssueJpaRepository issueJpaRepository, TagRepository tagRepository, UserRepository userRepository) {
         this.issueJpaRepository = issueJpaRepository;
         this.tagRepository = tagRepository;
+        this.userRepository = userRepository;
     }
+
 
     public Issue createIssue(IssueCreateRequest issueCreateRequest) {
         List<Tag> tags = issueCreateRequest.getTags().stream()
@@ -62,9 +68,11 @@ public class IssueService {
     public Issue changeIssueStatus(Long issueId, IssueStatusChangeRequest statusChangeRequest) {
         Issue issue = issueJpaRepository.findById(issueId)
                 .orElseThrow(() -> new IllegalArgumentException("Issue not found with id: " + issueId));
-        //String user = userJpaRepository.findByNickname(statusChangeRequest.getNickname());
-        //String userRole = user.getRole();      //user 구현되면 주석 해제
-        String userRole = statusChangeRequest.getNickname();
+        User user = userRepository.findByNickname(statusChangeRequest.getNickname());
+        UserRole useRole = user.getRole();      //user 구현되면 주석 해제
+        String userRole = useRole.name();
+
+        //String userRole = statusChangeRequest.getNickname();
 
         switch (statusChangeRequest.getStatus()) {
             case "fixed":
@@ -103,9 +111,10 @@ public class IssueService {
         Issue issue = issueJpaRepository.findById(issueId)
                 .orElseThrow(() -> new IllegalArgumentException("Issue not found with id: " + issueId));
 
-        //String user = userJpaRepository.findByNickname(issueMangerChangeRequest.getNickname());
-        //String userRole = user.getRole();
-        String userRole = issueMangerChangeRequest.getNickname(); //user구현되면 지울것
+        User user = userRepository.findByNickname(issueMangerChangeRequest.getNickname());
+        UserRole useRole = user.getRole();
+        String userRole = useRole.name();
+        //String userRole = issueMangerChangeRequest.getNickname(); //user구현되면 지울것
 
         if (!userRole.equals("PL")) {
             throw new IllegalStateException("Only users with 'PL' role can change assignee.");
