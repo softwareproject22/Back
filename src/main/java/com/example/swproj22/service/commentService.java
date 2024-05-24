@@ -24,7 +24,7 @@ public class commentService {
     public Comment addComment(commentAddRequest commentAddRequest) {
         Comment comment = Comment.builder()
                 .content(commentAddRequest.getContent())
-                .issueId(issueJpaRepository.findById(commentAddRequest.getIssueId()).orElse(null))
+                .issue(issueJpaRepository.findById(commentAddRequest.getIssueId()).orElseThrow(() -> new RuntimeException("Issue not found")))
                 .sender(commentAddRequest.getSender())
                 .build();
 

@@ -15,15 +15,14 @@ public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long commentId;
 
     @Column(length = 300)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", insertable = false, updatable = false)
-    @NotNull
-    private Issue issueId;
+    @JoinColumn(name = "id", nullable = false)
+    private Issue issue;
 
     private String sender;
 }
