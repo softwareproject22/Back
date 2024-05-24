@@ -39,6 +39,8 @@ public class Issue {
 
     private LocalDateTime reportedTime;
 
+    @OneToMany(mappedBy = "issue")
+    private List<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
