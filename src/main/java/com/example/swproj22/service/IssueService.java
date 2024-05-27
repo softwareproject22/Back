@@ -76,12 +76,12 @@ public class IssueService {
 
         switch (statusChangeRequest.getStatus()) {
             case "fixed":
-                if (!userRole.equals("dev")) {
+                if (!userRole.equals("DEV")) {
                     throw new IllegalStateException("Only users with 'dev' role can change status to 'fixed'.");
                 }
                 break;
             case "resolved":
-                if (!userRole.equals("tester")) {
+                if (!userRole.equals("TESTER")) {
                     throw new IllegalStateException("Only users with 'tester' role can change status to 'resolved'.");
                 }
                 break;
