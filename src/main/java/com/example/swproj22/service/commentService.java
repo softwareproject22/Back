@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.swproj22.repository.commentJpaRepository;
 
+import java.util.List;
+
 @Service
 public class commentService {
 
@@ -29,6 +31,10 @@ public class commentService {
                 .build();
 
         return commentJpaRepository.save(comment);
+    }
+
+    public List<Comment> getComments(Long issueId) {
+        return commentJpaRepository.findByIssueId(issueId);
     }
 
 }
