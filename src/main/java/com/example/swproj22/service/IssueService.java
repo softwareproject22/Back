@@ -48,6 +48,7 @@ public class IssueService {
                 .code(issueCreateRequest.getCode())
                 .status("new")
                 .reporter(issueCreateRequest.getReporter())
+                .priority(issueCreateRequest.getPriority())
                 .tags(tags)
                 .priority(issueCreateRequest.getPriority())
                 .reportedTime(LocalDateTime.now())

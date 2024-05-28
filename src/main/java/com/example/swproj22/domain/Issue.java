@@ -1,5 +1,6 @@
 package com.example.swproj22.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,7 +39,11 @@ public class Issue {
 
     private LocalDateTime reportedTime;
 
-    @OneToMany(mappedBy = "issue") private List<Comment> comments;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "issue")
+    private List<Comment> comments;
+
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
