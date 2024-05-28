@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Builder
 public class IssueCreateRequest {
-    @NotBlank
+    @NotNull
     private Long projectId;
 
     @NotBlank
@@ -23,6 +23,8 @@ public class IssueCreateRequest {
 
     @NotBlank
     private String code;
+
+    private String priority;
 
     @NotNull
     private String reporter;
