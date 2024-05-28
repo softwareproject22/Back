@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/analyze")
@@ -20,20 +21,21 @@ public class AnalyzeController {
         this.analyzeService = analyzeService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Analyze>> getAllAnalyses(){
-        List<Analyze> analyses = analyzeService.findAllAnalyses();
-        return ResponseEntity.ok(analyses);
+    @GetMapping("/daily")
+    public ResponseEntity<Map<String, Long>> getDailyIssueCounts() {
+        Map<String, Long> dailyCounts = analyzeService.countIssuesByDay();
+        return ResponseEntity.ok(dailyCounts);
     }
 
-    @PostMapping
-    public ResponseEntity<Analyze> createAnalyze(@RequestBody AnalyzeCreateRequest request){
-        Analyze savedAnalyze = analyzeService.createAndSaveAnalysis(
-                request.getIssueId(),
-                request.getAnalysisDate(),
-                request.getIssueCount(),
-                request.getDetails()
-        );
-        return ResponseEntity.ok(savedAnalyze);
+    @GetMapping("/monthly")
+    public ResponseEntity<Map<String, Long>> getMonthlyIssueCounts() {
+        Map<String, Long> monthlyCounts = analyzeService.countIssuesByMonth();
+        return ResponseEntity.ok(monthlyCounts);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Long>> getStatusIssueCounts() {
+        Map<String, Long> statusCounts = analyzeService.countIssuesByStatus();
+        return ResponseEntity.ok(statusCounts);
     }
 }
