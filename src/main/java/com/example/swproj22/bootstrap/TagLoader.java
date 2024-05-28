@@ -27,6 +27,10 @@ public class TagLoader implements CommandLineRunner {
             tagRepository.save(new Tag(null, "회원가입"));
             tagRepository.save(new Tag(null, "이슈생성"));
             tagRepository.save(new Tag(null, "코멘트"));
+            tagRepository.save(new Tag(null, "기능요청"));
+            tagRepository.save(new Tag(null, "개선점"));
+            tagRepository.save(new Tag(null, "보안"));
+            tagRepository.save(new Tag(null, "태그"));
         }
     }
 

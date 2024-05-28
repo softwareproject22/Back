@@ -27,15 +27,15 @@ public class TagService {
         return tagRepository.save(tag);
     }
 
-    public void addTagToIssue() {
-        List<Tag> allTags = tagRepository.findAll();
-        List<Issue> allIssues = issueRepository.findAll();
+    public void addTagToIssue(Long issueId, Long tagId) {
+        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new RuntimeException("Issue not found"));
+        Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new RuntimeException("Tag not found"));
+        issue.getTags().add(tag);
+        issueRepository.save(issue);
 
-        for(Issue issue : allIssues){
-            issue.getTags().clear();
-            issue.getTags().addAll(allTags);
-            issueRepository.save(issue);
-        }
+    }
 
+    public List<Tag> getAllTags() {
+        return tagRepository.findAll();
     }
 }
