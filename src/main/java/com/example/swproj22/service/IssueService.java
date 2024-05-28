@@ -66,8 +66,12 @@ public class IssueService {
                 .orElseThrow(() -> new IllegalArgumentException("Issue not found with id: " + issueId));
 
         issue.setCode(editCodeRequest.getCode());
-
-        return issueJpaRepository.save(issue);
+        Issue savedIssue = issueJpaRepository.save(issue);
+        if(savedIssue == null) {
+            throw new RuntimeException("Failed to save issue with id: " + issueId);
+        }
+        return savedIssue;
+        //return issueJpaRepository.save(issue);
     }
 
     public Issue changeIssueStatus(Long issueId, IssueStatusChangeRequest statusChangeRequest) {

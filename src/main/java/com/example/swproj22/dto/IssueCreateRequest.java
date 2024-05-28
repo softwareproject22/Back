@@ -32,4 +32,15 @@ public class IssueCreateRequest {
     private List<Long> tags;
 
 
+//    public IssueCreateRequest(@NotNull Long projectId, @NotBlank String title, @Size(max = 1000) String description,
+//                              @NotBlank String code, String reporter, @NotNull List<Long> tags, String priority) {
+//        this.projectId = projectId;
+//        this.title = title;
+//        this.description = description;
+//        this.code = code;
+//        this.reporter = reporter;
+//        this.tags = tags;
+//        this.priority = priority;
+//    }
+
 }
