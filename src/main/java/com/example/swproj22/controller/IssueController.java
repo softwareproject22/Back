@@ -35,6 +35,16 @@ public class IssueController {
         }
     }
 
+    @GetMapping("/{issueId}")
+    public ResponseEntity<Issue> getIssueByIssueId(@PathVariable Long issueId) {
+        try {
+            Issue issue = issueService.getIssueByIssueId(issueId);
+            return ResponseEntity.ok(issue);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @PutMapping("/editCode/{issueId}")
     public ResponseEntity<String> editIssueCode(@PathVariable Long issueId, @RequestBody IssueEditCodeRequest editCodeRequest) {
         try {

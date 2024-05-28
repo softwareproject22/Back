@@ -55,7 +55,12 @@ public class IssueService {
 
         return issueJpaRepository.save(issue);
     }
+    public Issue getIssueByIssueId(Long issueId){
+        Issue issue = issueJpaRepository.findById(issueId)
+                .orElseThrow(() -> new IllegalArgumentException("Issue not found with id: " + issueId));
 
+        return issue;
+    }
     public Issue editIssueCode(Long issueId, IssueEditCodeRequest editCodeRequest) {
         Issue issue = issueJpaRepository.findById(issueId)
                 .orElseThrow(() -> new IllegalArgumentException("Issue not found with id: " + issueId));
