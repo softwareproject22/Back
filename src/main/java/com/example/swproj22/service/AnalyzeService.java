@@ -46,4 +46,14 @@ public class AnalyzeService {
         return statusCounts;
     }
 
+    public Map<String, Long> countIssuesByTag() {
+        List<Object[]> results = issueJpaRepository.countIssuesByTag();
+        Map<String, Long> tagCounts = new HashMap<>();
+        for (Object[] result : results) {
+            tagCounts.put((String) result[0], (Long) result[1]);
+        }
+        return tagCounts;
+    }
+
+
 }
