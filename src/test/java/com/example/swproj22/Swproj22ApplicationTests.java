@@ -1,5 +1,7 @@
 package com.example.swproj22;
 
+
+
 import com.example.swproj22.bootstrap.TagLoader;
 import com.example.swproj22.domain.Issue;
 import com.example.swproj22.domain.Tag;
@@ -12,11 +14,11 @@ import com.example.swproj22.repository.UserRepository;
 import com.example.swproj22.service.IssueService;
 import com.example.swproj22.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -32,6 +35,7 @@ class Swproj22ApplicationTests {
 	@Test
 	void contextLoads() {
 	}
+
 
 	@Mock
 	private TagRepository tagRepository;
@@ -423,5 +427,6 @@ class Swproj22ApplicationTests {
 
 		verify(issueJpaRepository, times(1)).findByProjectIdAndAssignee(projectId, assignee);
 	}
+
 
 }
