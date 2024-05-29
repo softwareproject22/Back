@@ -24,8 +24,6 @@ public class IssueCreateRequest {
     @NotBlank
     private String code;
 
-    private String priority;
-
     @NotNull
     private String reporter;
 
