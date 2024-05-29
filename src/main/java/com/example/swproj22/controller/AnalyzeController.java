@@ -38,4 +38,10 @@ public class AnalyzeController {
         Map<String, Long> statusCounts = analyzeService.countIssuesByStatus();
         return ResponseEntity.ok(statusCounts);
     }
+
+    @GetMapping("/tags")
+    public ResponseEntity<Map<String, Long>> getTagIssueCounts() {
+        Map<String, Long> tagCounts = analyzeService.countIssuesByTag();
+        return ResponseEntity.ok(tagCounts);
+    }
 }
