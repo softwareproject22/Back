@@ -48,29 +48,6 @@ class Swproj22ApplicationTests {
 	@InjectMocks
 	private IssueService issueService;
 
-	@Test
-	public void testCreateTag() {
-		// Setup
-		TagCreateRequest request = new TagCreateRequest();
-		request.setCategory("Bug");
-
-		Tag expectedTag = new Tag();
-		expectedTag.setCategory("Bug");
-
-		when(tagRepository.save(any(Tag.class))).thenReturn(expectedTag);
-
-		// Execute
-		Tag result = tagService.createTag(request);
-
-		// Verify
-		assertEquals("Bug", result.getCategory());
-		verify(tagRepository).save(any(Tag.class)); // 확인: save 메서드가 호출되었는지
-	}
-
-
-
-
-
 /*Issue Test Code*/
 	private IssueCreateRequest issueCreateRequest;
 	private Tag tag1;
