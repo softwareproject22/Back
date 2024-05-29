@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.swproj22.service.commentService;
 
 import java.util.List;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/comment")
