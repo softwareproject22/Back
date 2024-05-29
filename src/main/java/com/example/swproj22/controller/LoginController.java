@@ -1,48 +1,51 @@
 package com.example.swproj22.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import com.example.swproj22.domain.UserRole;
 import com.example.swproj22.domain.dto.JoinRequest;
 import com.example.swproj22.domain.dto.LoginRequest;
 import com.example.swproj22.domain.entity.User;
 import com.example.swproj22.service.UserService;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import com.example.swproj22.domain.UserRole;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/login")
+@RequestMapping("/home")
 public class LoginController {
 
     private final UserService userService;
 
     @GetMapping(value = {"", "/"})
-    public String home(Model model, @SessionAttribute(name = "userId", required = false) Long userId) {
+    public ResponseEntity<?> home(@SessionAttribute(name = "userId", required = false) Long userId) {
         User loginUser = userService.getLoginUserById(userId);
 
-        if(loginUser != null) {
-            model.addAttribute("nickname", loginUser.getNickname());
+        Map<String, Object> response = new HashMap<>();
+        if (loginUser != null) {
+            response.put("nickname", loginUser.getNickname());
+            response.put("message", "User is logged in");
+        } else {
+            response.put("message", "User is not logged in");
         }
 
-        return "home";
-    }
-
-    @GetMapping("/join")
-    public String joinPage(Model model) {
-
-        model.addAttribute("joinRequest", new JoinRequest());
-        return "join";
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/join")
-    public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) {
+    public ResponseEntity<Map<String, String>> join(@Valid @RequestBody JoinRequest joinRequest, BindingResult bindingResult) {
+        Map<String, String> response = new HashMap<>();
+
         // loginId 중복 체크
         if(userService.checkLoginIdDuplicate(joinRequest.getLoginId())) {
             bindingResult.addError(new FieldError("joinRequest", "loginId", "로그인 아이디가 중복됩니다."));
@@ -52,10 +55,10 @@ public class LoginController {
             bindingResult.addError(new FieldError("joinRequest", "nickname", "닉네임이 중복됩니다."));
         }
         // password와 passwordCheck가 같은지 체크
-        if(!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())) {
-            bindingResult.addError(new FieldError("joinRequest", "passwordCheck", "바밀번호가 일치하지 않습니다."));
+     if(!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())) {
+            bindingResult.addError(new FieldError("joinRequest", "passwordCheck", "비밀번호가 일치하지 않습니다."));
         }
-        //유효한 role인지 확인
+        // 유효한 role인지 확인
         try {
             UserRole.valueOf(joinRequest.getRole().name());
         } catch (IllegalArgumentException | NullPointerException e) {
@@ -63,67 +66,80 @@ public class LoginController {
         }
 
         if(bindingResult.hasErrors()) {
-            return "join";
+            bindingResult.getFieldErrors().forEach(error -> {
+                response.put(error.getField(), error.getDefaultMessage());
+            });
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         userService.join(joinRequest);
-        return "redirect:/login";
-    }
-
-    @GetMapping("/login")
-    public String loginPage(Model model) {
-        model.addAttribute("loginRequest", new LoginRequest());
-        return "login";
+        response.put("message", "회원 가입 성공");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute LoginRequest loginRequest, BindingResult bindingResult,
-                        HttpServletRequest httpServletRequest, Model model) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest, BindingResult bindingResult,
+                                   HttpServletRequest httpServletRequest) {
         User user = userService.login(loginRequest);
+        Map<String, String> loginresponse = new HashMap<>();
 
-        // 로그인 아이디나 비밀번호가 틀린 경우 global error return
-        if(user == null) {
-            bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
+        if (user == null) {
+            // 로그인 아이디나 비밀번호가 틀린 경우 필드 오류 추가
+            bindingResult.addError(new FieldError("loginRequest", "loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다."));
+        }
+        if (bindingResult.hasErrors()) {
+            bindingResult.getFieldErrors().forEach(error -> {
+                loginresponse.put(error.getField(), error.getDefaultMessage());
+            });
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(loginresponse);
         }
 
-        if(bindingResult.hasErrors()) {
-            return "login";
-        }
+        // 로그인 성공하면 세션이 생성됨
+        httpServletRequest.getSession().invalidate(); // 세션을 생성하기 전에 기존 세션 파기
+        HttpSession session = httpServletRequest.getSession(true); // 세션 없으면 생성
+        session.setAttribute("userId", user.getId()); // 세션에 userId를 넣어줌
+        session.setMaxInactiveInterval(3600); //세션 1시간 동안 유지
 
-        // 로그인 성공 => 세션 생성
-
-        // 세션을 생성하기 전에 기존의 세션 파기
-        httpServletRequest.getSession().invalidate();
-        HttpSession session = httpServletRequest.getSession(true);  // Session이 없으면 생성
-        // 세션에 userId를 넣어줌
-        session.setAttribute("userId", user.getId());
-        session.setMaxInactiveInterval(3600); // Session 1시간동안 유지
-
-        return "redirect:/login";
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Login successful");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request, Model model) {
-
-        HttpSession session = request.getSession(false);  // Session이 없으면 null return
-        if(session != null) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false); // 세션 없으면 null return
+        if (session != null) {
             session.invalidate();
         }
-        return "redirect:/login";
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Logout successful");
+        return ResponseEntity.ok(response);
     }
-
-    @GetMapping("/info")
-    public String userInfo(@SessionAttribute(name = "userId", required = false) Long userId, Model model) {
-
+    @GetMapping("/login/info")
+    public ResponseEntity<?> userInfo(@SessionAttribute(name = "userId", required = false) Long userId) {
         User loginUser = userService.getLoginUserById(userId);
 
         if (loginUser == null) {
-            return "redirect:/login/login";
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "User not logged in");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-
-        model.addAttribute("user", loginUser);
-        return "info";
-
+        Map<String, Object> response = new HashMap<>();
+        response.put("loginId", loginUser.getLoginId());
+        response.put("role", loginUser.getRole());
+        return ResponseEntity.ok(response);
     }
+    @GetMapping("/login/userlist") //admin일때만 적용
+    public ResponseEntity<?> getUserList() {
+        List<User> users = userService.getAllUsers();
 
+        List<Map<String, Object>> userList = users.stream().map(user -> {
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("loginId", user.getLoginId());
+            userMap.put("role", user.getRole());
+            return userMap;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(userList);
+    }
 }
