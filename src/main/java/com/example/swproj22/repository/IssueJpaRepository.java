@@ -27,4 +27,8 @@ public interface IssueJpaRepository extends JpaRepository<Issue, Long> {
     @Query("SELECT i.status, COUNT(i) FROM Issue i GROUP BY i.status")
     List<Object[]> countIssuesByStatus();
 
+    @Query("SELECT t.category, COUNT(i.id) FROM Issue i JOIN i.tags t GROUP BY t.category")
+    List<Object[]> countIssuesByTag();
+
+
 }

@@ -12,6 +12,7 @@ import com.example.swproj22.domain.entity.User;
 import com.example.swproj22.repository.UserRepository;
 
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,21 +43,11 @@ public class UserService {
     }
     /**
      * 회원가입 기능 1
-     * 화면에서 JoinRequest(loginId, password, nickname)을 입력받아 User로 변환 후 저장
-     * loginId, nickname 중복 체크는 Controller에서 진행 => 에러 메세지 출력을 위해
+     * 화면에서 DTO - JoinRequest(loginId, password, nickname)을 입력받아 User로 변환 후 저장
      */
     public void join(JoinRequest req) {
         userRepository.save(req.toEntity());
     }
-
-    /**
-     * 회원가입 기능 2
-     * 화면에서 JoinRequest(loginId, password, nickname)을 입력받아 User로 변환 후 저장
-     * 회원가입 1과는 달리 비밀번호를 암호화해서 저장
-     * loginId, nickname 중복 체크는 Controller에서 진행 => 에러 메세지 출력을 위해
-     public void join2(JoinRequest req) {
-        userRepository.save(req.toEntity(encoder.encode(req.getPassword())));
-    }*/
 
     /**
      *  로그인 기능
@@ -109,5 +100,9 @@ public class UserService {
         if(optionalUser.isEmpty()) return null;
 
         return optionalUser.get();
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
