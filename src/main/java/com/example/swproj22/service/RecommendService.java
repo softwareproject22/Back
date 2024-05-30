@@ -7,12 +7,14 @@ import com.example.swproj22.domain.entity.User;
 import com.example.swproj22.repository.IssueJpaRepository;
 import com.example.swproj22.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Objects;
 
+@Service
 public class RecommendService {
 
     private final IssueJpaRepository issueJpaRepository;
@@ -47,7 +49,7 @@ public class RecommendService {
     }
 
     private Set<String> getBusyAssignees() {
-        List<Issue> busyIssues = issueJpaRepository.findByStatus(List.of("assigned", "resolved"));
+        List<Issue> busyIssues = issueJpaRepository.findByStatusIn(List.of("assigned", "resolved"));
         return busyIssues.stream()
                 .map(Issue::getAssignee) // 이 부분에서 String username이 반환됩니다.
                 .map(userRepository::findByNickname) // username으로 User 객체를 찾습니다.
