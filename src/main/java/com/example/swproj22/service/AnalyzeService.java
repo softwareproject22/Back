@@ -19,7 +19,7 @@ public class AnalyzeService {
     }
 
     public Map<String, Long> countIssuesByDay() {
-        List<Object[]> results = issueJpaRepository.countIssuesByDay();
+        List<Object[]> results = issueJpaRepository.countIssuesByDayUsingCast();
         Map<String, Long> dailyCounts = new HashMap<>();
         for (Object[] result : results) {
             dailyCounts.put(result[0].toString(), (Long) result[1]);
