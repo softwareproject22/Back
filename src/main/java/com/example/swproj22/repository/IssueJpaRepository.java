@@ -26,7 +26,7 @@ public interface IssueJpaRepository extends JpaRepository<Issue, Long> {
     @Query("SELECT i FROM Issue i JOIN i.tags t WHERE i.status = :status AND t.category IN :tagNames")
     List<Issue> findByStatusAndTags(@Param("status") String status, @Param("tagNames") List<Tag> tagNames); //파라미터의 상태와 태그이름이 같은 이슈 조회
 
-    List<Issue> findByStatus(List<String> statuses);
+    List<Issue> findByStatusIn(List<String> statuses);
 
     @Query("SELECT FUNCTION('DATE', i.reportedTime), COUNT(i) FROM Issue i GROUP BY FUNCTION('DATE', i.reportedTime)")
     List<Object[]> countIssuesByDay();

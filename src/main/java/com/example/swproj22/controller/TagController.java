@@ -20,15 +20,16 @@ public class TagController {
         this.tagService = tagService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<Tag>> getAllTags() {
+        List<Tag> tags = tagService.getAllTags();
+        return ResponseEntity.ok(tags);
+    }
+
     @PostMapping("/addTagToIssue")
     public ResponseEntity<Void> assignTagToIssue(@RequestBody TagAddToIssueRequest request) {
         tagService.addTagToIssue(request.getIssueId(), request.getTagId());
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<Tag>> getAllTags() {
-        List<Tag> tags = tagService.getAllTags();
-        return ResponseEntity.ok(tags);
-    }
 }
