@@ -25,15 +25,14 @@ public class JoinRequest {
     @NotBlank(message = "닉네임을 입력해야 합니다,")
     private String nickname;
 
-    @NotNull
-    private UserRole role;
+    private String role;
 
     public User toEntity() {
         return User.builder()
                 .loginId(this.loginId)
                 .password(this.password)
                 .nickname(this.nickname)
-                .role(this.role)
+                .role(UserRole.valueOf(this.role.toUpperCase()))
                 .build();
     }
 }
