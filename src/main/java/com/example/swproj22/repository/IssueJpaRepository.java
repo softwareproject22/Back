@@ -28,8 +28,8 @@ public interface IssueJpaRepository extends JpaRepository<Issue, Long> {
 
     List<Issue> findByStatusIn(List<String> statuses);
 
-    @Query("SELECT FUNCTION('DATE', i.reportedTime), COUNT(i) FROM Issue i GROUP BY FUNCTION('DATE', i.reportedTime)")
-    List<Object[]> countIssuesByDay();
+    @Query("SELECT CAST(i.reportedTime AS date) AS reportDate, COUNT(i) FROM Issue i GROUP BY CAST(i.reportedTime AS date)")
+    List<Object[]> countIssuesByDayUsingCast();
 
     @Query("SELECT FUNCTION('YEAR', i.reportedTime), FUNCTION('MONTH', i.reportedTime), COUNT(i) FROM Issue i GROUP BY FUNCTION('YEAR', i.reportedTime), FUNCTION('MONTH', i.reportedTime)")
     List<Object[]> countIssuesByMonth();
