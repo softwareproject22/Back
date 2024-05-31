@@ -1,16 +1,14 @@
 package com.example.swproj22.controller;
 
 import com.example.swproj22.domain.Tag;
-import com.example.swproj22.domain.Issue;
 import com.example.swproj22.dto.TagAddToIssueRequest;
-import com.example.swproj22.dto.TagCreateRequest;
 import com.example.swproj22.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/tags")
 public class TagController {
@@ -22,21 +20,15 @@ public class TagController {
         this.tagService = tagService;
     }
 
-    @PostMapping
-    public ResponseEntity<Tag> createTag(@RequestBody TagCreateRequest createRequest) {
-        Tag tag = tagService.createTag(createRequest);
-        return ResponseEntity.ok(tag);
+    @GetMapping
+    public ResponseEntity<List<Tag>> getAllTags() {
+        List<Tag> tags = tagService.getAllTags();
+        return ResponseEntity.ok(tags);
     }
 
     @PostMapping("/addTagToIssue")
     public ResponseEntity<Void> assignTagToIssue(@RequestBody TagAddToIssueRequest request) {
         tagService.addTagToIssue(request.getIssueId(), request.getTagId());
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Tag>> getAllTags() {
-        List<Tag> tags = tagService.getAllTags();
-        return ResponseEntity.ok(tags);
     }
 }

@@ -24,7 +24,6 @@ public class IssueCreateRequest {
     @NotBlank
     private String code;
 
-
     @NotNull
     private String reporter;
 

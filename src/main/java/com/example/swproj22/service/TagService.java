@@ -2,7 +2,6 @@ package com.example.swproj22.service;
 
 import com.example.swproj22.domain.Issue;
 import com.example.swproj22.domain.Tag;
-import com.example.swproj22.dto.TagCreateRequest;
 import com.example.swproj22.repository.IssueJpaRepository;
 import com.example.swproj22.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +20,14 @@ public class TagService {
         this.issueRepository = issueRepository;
     }
 
-    public Tag createTag(TagCreateRequest createRequest) {
-        Tag tag = new Tag();
-        tag.setCategory(createRequest.getCategory());
-        return tagRepository.save(tag);
-    }
-
     public void addTagToIssue(Long issueId, Long tagId) {
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new RuntimeException("Issue not found"));
         Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new RuntimeException("Tag not found"));
-        issue.getTags().add(tag);
-        issueRepository.save(issue);
+
+        if (!issue.getTags().contains(tag)) {
+            issue.getTags().add(tag);
+            issueRepository.save(issue);
+        }
 
     }
 

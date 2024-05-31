@@ -1,8 +1,10 @@
 package com.example.swproj22.repository;
 
 import com.example.swproj22.domain.Issue;
+import com.example.swproj22.domain.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,8 +20,16 @@ public interface IssueJpaRepository extends JpaRepository<Issue, Long> {
 
     List<Issue> findByProjectIdAndAssignee(Long projectId, String assignee);
 
-    @Query("SELECT FUNCTION('DATE', i.reportedTime), COUNT(i) FROM Issue i GROUP BY FUNCTION('DATE', i.reportedTime)")
-    List<Object[]> countIssuesByDay();
+    //@Query("SELECT t FROM Issue i JOIN i.tags t WHERE i.id = :issueId")
+    //List<Tag> findTagsByIssueId(@Param("issueId") Long issueId); //주어진 이슈 ID에 대해 해당 이슈에 할당된 모든 태그 조회
+
+    @Query("SELECT i FROM Issue i JOIN i.tags t WHERE i.status = :status AND t.category IN :tagNames")
+    List<Issue> findByStatusAndTags(@Param("status") String status, @Param("tagNames") List<Tag> tagNames); //파라미터의 상태와 태그이름이 같은 이슈 조회
+
+    List<Issue> findByStatusIn(List<String> statuses);
+
+    @Query("SELECT CAST(i.reportedTime AS date) AS reportDate, COUNT(i) FROM Issue i GROUP BY CAST(i.reportedTime AS date)")
+    List<Object[]> countIssuesByDayUsingCast();
 
     @Query("SELECT FUNCTION('YEAR', i.reportedTime), FUNCTION('MONTH', i.reportedTime), COUNT(i) FROM Issue i GROUP BY FUNCTION('YEAR', i.reportedTime), FUNCTION('MONTH', i.reportedTime)")
     List<Object[]> countIssuesByMonth();
