@@ -31,5 +31,4 @@ public class TagController {
         tagService.addTagToIssue(request.getIssueId(), request.getTagId());
         return ResponseEntity.ok().build();
     }
-
 }

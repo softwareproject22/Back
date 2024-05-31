@@ -43,6 +43,15 @@ public class LoginController {
         return ResponseEntity.ok(response);
     }
 
+
+    private boolean isValidUserRole(String role) {
+        try {
+            UserRole.valueOf(role.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return false;
+        }
+    }
     @PostMapping("/join")
     public ResponseEntity<Map<String, String>> join(@Valid @RequestBody JoinRequest joinRequest, BindingResult bindingResult) {
         Map<String, String> response = new HashMap<>();
@@ -59,10 +68,9 @@ public class LoginController {
      if(!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())) {
             bindingResult.addError(new FieldError("joinRequest", "passwordCheck", "비밀번호가 일치하지 않습니다."));
         }
+
         // 유효한 role인지 확인
-        try {
-            UserRole.valueOf(joinRequest.getRole().name());
-        } catch (IllegalArgumentException | NullPointerException e) {
+        if (joinRequest.getRole() == null || !isValidUserRole(joinRequest.getRole())) {
             bindingResult.addError(new FieldError("joinRequest", "role", "존재하지 않는 role입니다"));
         }
 
@@ -70,7 +78,7 @@ public class LoginController {
             bindingResult.getFieldErrors().forEach(error -> {
                 response.put(error.getField(), error.getDefaultMessage());
             });
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
         userService.join(joinRequest);
@@ -92,7 +100,7 @@ public class LoginController {
             bindingResult.getFieldErrors().forEach(error -> {
                 loginresponse.put(error.getField(), error.getDefaultMessage());
             });
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(loginresponse);
+            return ResponseEntity.status(HttpStatus.OK).body(loginresponse);
         }
 
         // 로그인 성공하면 세션이 생성됨
@@ -123,14 +131,14 @@ public class LoginController {
         if (loginUser == null) {
             Map<String, String> response = new HashMap<>();
             response.put("message", "User not logged in");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }
         Map<String, Object> response = new HashMap<>();
         response.put("loginId", loginUser.getLoginId());
         response.put("role", loginUser.getRole());
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/login/userlist") //admin일때만 적용
+    @GetMapping("/userlist") //admin일때만 적용
     public ResponseEntity<?> getUserList() {
         List<User> users = userService.getAllUsers();
 
