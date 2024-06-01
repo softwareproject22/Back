@@ -20,8 +20,8 @@ public interface IssueJpaRepository extends JpaRepository<Issue, Long> {
 
     List<Issue> findByProjectIdAndAssignee(Long projectId, String assignee);
 
-    @Query("SELECT i FROM Issue i JOIN i.tags t WHERE i.status = :status AND t IN :tags")
-    List<Issue> findByStatusAndTags(@Param("status") String status, @Param("tags") List<Tag> tags); //파라미터의 상태와 태그이름이 같은 이슈 조회
+    @Query("SELECT i FROM Issue i JOIN i.tags t WHERE i.status IN :statuses AND t IN :tags")
+    List<Issue> findByStatusesAndTags(@Param("statuses") List<String> statuses, @Param("tags") List<Tag> tags);
 
     List<Issue> findByStatusIn(List<String> statuses);
 
