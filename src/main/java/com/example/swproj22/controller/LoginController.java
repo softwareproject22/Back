@@ -76,7 +76,7 @@ public class LoginController {
 
         if(bindingResult.hasErrors()) {
             bindingResult.getFieldErrors().forEach(error -> {
-                response.put(error.getField(), error.getDefaultMessage());
+                response.put("error", error.getDefaultMessage());
             });
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
