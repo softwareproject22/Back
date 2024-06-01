@@ -29,7 +29,7 @@ public class LoginController {
     private final UserService userService;
 
     @GetMapping(value = {"", "/"})
-    public ResponseEntity<?> home(@SessionAttribute(name = "userId", required = false) Long userId) {
+    public ResponseEntity<?> home(@RequestParam(name = "userId", required = false) Long userId) {
         User loginUser = userService.getLoginUserById(userId);
 
         Map<String, Object> response = new HashMap<>();
@@ -125,7 +125,7 @@ public class LoginController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/login/info")
-    public ResponseEntity<?> userInfo(@SessionAttribute(name = "userId", required = false) Long userId) {
+    public ResponseEntity<?> userInfo(@RequestParam(name = "userId", required = false) Long userId) {
         User loginUser = userService.getLoginUserById(userId);
 
         if (loginUser == null) {
@@ -136,6 +136,7 @@ public class LoginController {
         Map<String, Object> response = new HashMap<>();
         response.put("loginId", loginUser.getLoginId());
         response.put("role", loginUser.getRole());
+        response.put("nickname", loginUser.getNickname());
         return ResponseEntity.ok(response);
     }
     @GetMapping("/userlist") //admin일때만 적용
@@ -146,6 +147,7 @@ public class LoginController {
             Map<String, Object> userMap = new HashMap<>();
             userMap.put("loginId", user.getLoginId());
             userMap.put("role", user.getRole());
+            userMap.put("nickname", user.getNickname());
             return userMap;
         }).collect(Collectors.toList());
 
