@@ -39,11 +39,13 @@ public class RecommendService {
                     .map(User::getNickname)
                     .distinct()
                     .filter(username -> !busyAssignees.contains(username))
+                    .limit(3)
                     .collect(Collectors.toList());
         } else {
             return userRepository.findByRole(UserRole.DEV).stream()
                     .map(User::getNickname)
                     .filter(username -> !busyAssignees.contains(username))
+                    .limit(3)
                     .collect(Collectors.toList());
         }
     }
