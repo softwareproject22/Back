@@ -11,11 +11,15 @@ import com.example.swproj22.dto.*;
 import com.example.swproj22.repository.TagRepository;
 import com.example.swproj22.repository.IssueJpaRepository;
 import com.example.swproj22.repository.UserRepository;
+import com.example.swproj22.service.AnalyzeService;
 import com.example.swproj22.service.IssueService;
 import com.example.swproj22.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -23,6 +27,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -48,6 +53,9 @@ class Swproj22ApplicationTests {
 	@InjectMocks
 	private IssueService issueService;
 
+	@InjectMocks
+	private AnalyzeService analyzeService;
+
 /*Issue Test Code*/
 	private IssueCreateRequest issueCreateRequest;
 	private Tag tag1;
@@ -57,6 +65,7 @@ class Swproj22ApplicationTests {
 	void setUp() {
 		tag1 = new Tag(1L, "tag1");
 		tag2 = new Tag(2L, "tag2");
+		MockitoAnnotations.openMocks(this);
 
 		List<Long> tagIds = Arrays.asList(1L, 2L);
 		issueCreateRequest = IssueCreateRequest.builder()
@@ -404,6 +413,5 @@ class Swproj22ApplicationTests {
 
 		verify(issueJpaRepository, times(1)).findByProjectIdAndAssignee(projectId, assignee);
 	}
-
 
 }

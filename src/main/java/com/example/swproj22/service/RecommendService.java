@@ -51,7 +51,7 @@ public class RecommendService {
         }
     }
 
-    private Set<String> getBusyAssignees() {
+    public Set<String> getBusyAssignees() {
         List<Issue> busyIssues = issueJpaRepository.findByStatusIn(List.of("assigned", "resolved"));
         return busyIssues.stream()
                 .map(Issue::getFixer) // 이 부분에서 String username이 반환됩니다.
