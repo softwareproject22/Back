@@ -1,9 +1,11 @@
 package com.example.swproj22.service;
 
+import com.example.swproj22.dto.IssueCountRequest;
 import com.example.swproj22.repository.IssueJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -18,21 +20,21 @@ public class AnalyzeService {
         this.issueJpaRepository = issueJpaRepository;
     }
 
-    public Map<String, Long> countIssuesByDay() {
-        List<Object[]> results = issueJpaRepository.countIssuesByDay();
-        Map<String, Long> dailyCounts = new HashMap<>();
+    public List<IssueCountRequest> countIssuesByDay() {
+        List<Object[]> results = issueJpaRepository.countIssuesByDayUsingCast();
+        List<IssueCountRequest> dailyCounts = new ArrayList<>();
         for (Object[] result : results) {
-            dailyCounts.put(result[0].toString(), (Long) result[1]);
+            dailyCounts.add(new IssueCountRequest(result[0].toString(), (Long) result[1]));
         }
         return dailyCounts;
     }
 
-    public Map<String, Long> countIssuesByMonth() {
+    public List<IssueCountRequest> countIssuesByMonth() {
         List<Object[]> results = issueJpaRepository.countIssuesByMonth();
-        Map<String, Long> monthlyCounts = new HashMap<>();
+        List<IssueCountRequest> monthlyCounts = new ArrayList<>();
         for (Object[] result : results) {
             String yearMonth = result[0] + "-" + String.format("%02d", result[1]);
-            monthlyCounts.put(yearMonth, (Long) result[2]);
+            monthlyCounts.add(new IssueCountRequest(yearMonth, (Long) result[2]));
         }
         return monthlyCounts;
     }

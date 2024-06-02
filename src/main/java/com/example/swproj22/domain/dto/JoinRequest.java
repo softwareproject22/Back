@@ -15,35 +15,24 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 public class JoinRequest {
 
-    @NotBlank(message = "로그인 아이디가 비어있습니다.")
+    @NotBlank(message = "로그인 아이디를 입력해야 합니다.")
     private String loginId;
 
-    @NotBlank(message = "비밀번호가 비어있습니다.")
+    @NotBlank(message = "비밀번호를 입력해야 합니다.")
     private String password;
     private String passwordCheck;
 
-    @NotBlank(message = "닉네임이 비어있습니다.")
+    @NotBlank(message = "닉네임을 입력해야 합니다,")
     private String nickname;
-    @NotNull(message = "역할을 선택해야 합니다.")
-    private UserRole role;
+
+    private String role;
 
     public User toEntity() {
         return User.builder()
                 .loginId(this.loginId)
                 .password(this.password)
                 .nickname(this.nickname)
-                .role(this.role)
+                .role(UserRole.valueOf(this.role.toUpperCase()))
                 .build();
     }
-
-    /** 비밀번호 암호화
-    public User toEntity(String encodedPassword) {
-        return User.builder()
-                .loginId(this.loginId)
-                .password(encodedPassword)
-                .nickname(this.nickname)
-                .role(this.role)
-                .build();
-    }
-     */
 }

@@ -9,5 +9,6 @@ import lombok.Setter;
 @Builder
 public class IssueMangerChangeRequest {
     private String nickname;
+
     private String pl;
-}
+

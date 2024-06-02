@@ -1,8 +1,10 @@
 package com.example.swproj22.repository;
 
 import com.example.swproj22.domain.Issue;
+import com.example.swproj22.domain.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,8 +20,13 @@ public interface IssueJpaRepository extends JpaRepository<Issue, Long> {
 
     List<Issue> findByProjectIdAndAssignee(Long projectId, String assignee);
 
-    @Query("SELECT FUNCTION('DATE', i.reportedTime), COUNT(i) FROM Issue i GROUP BY FUNCTION('DATE', i.reportedTime)")
-    List<Object[]> countIssuesByDay();
+    @Query("SELECT i FROM Issue i JOIN i.tags t WHERE i.status IN :statuses AND t IN :tags")
+    List<Issue> findByStatusesAndTags(@Param("statuses") List<String> statuses, @Param("tags") List<Tag> tags);
+
+    List<Issue> findByStatusIn(List<String> statuses);
+
+    @Query("SELECT CAST(i.reportedTime AS date) AS reportDate, COUNT(i) FROM Issue i GROUP BY CAST(i.reportedTime AS date)")
+    List<Object[]> countIssuesByDayUsingCast();
 
     @Query("SELECT FUNCTION('YEAR', i.reportedTime), FUNCTION('MONTH', i.reportedTime), COUNT(i) FROM Issue i GROUP BY FUNCTION('YEAR', i.reportedTime), FUNCTION('MONTH', i.reportedTime)")
     List<Object[]> countIssuesByMonth();
