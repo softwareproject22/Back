@@ -121,7 +121,7 @@ public class IssueService {
         Issue issue = issueJpaRepository.findById(issueId)
                 .orElseThrow(() -> new IllegalArgumentException("Issue not found with id: " + issueId));
 
-        User user = userRepository.findByNickname(issueMangerChangeRequest.getNickname());
+        User user = userRepository.findByNickname(issueMangerChangeRequest.getPl());
         UserRole useRole = user.getRole();
         String userRole = useRole.name();
         //String userRole = issueMangerChangeRequest.getNickname(); //user구현되면 지울것
@@ -130,7 +130,7 @@ public class IssueService {
             throw new IllegalStateException("Only users with 'PL' role can change assignee.");
         }
 
-        issue.setAssignee(issueMangerChangeRequest.getAssignedUserId());
+        issue.setAssignee(issueMangerChangeRequest.getNickname());
         return issueJpaRepository.save(issue);
     }
 
