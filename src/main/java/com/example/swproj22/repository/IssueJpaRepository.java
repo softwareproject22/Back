@@ -18,13 +18,11 @@ public interface IssueJpaRepository extends JpaRepository<Issue, Long> {
 
     List<Issue> findByProjectIdAndReporter(Long projectId, String reporter);
 
+    @Query("SELECT i FROM Issue i WHERE i.projectId = ?1 AND i.assignee = ?2 AND i.status != 'fixed'")
     List<Issue> findByProjectIdAndAssignee(Long projectId, String assignee);
 
-    //@Query("SELECT t FROM Issue i JOIN i.tags t WHERE i.id = :issueId")
-    //List<Tag> findTagsByIssueId(@Param("issueId") Long issueId); //주어진 이슈 ID에 대해 해당 이슈에 할당된 모든 태그 조회
-
-    @Query("SELECT i FROM Issue i JOIN i.tags t WHERE i.status = :status AND t.category IN :tagNames")
-    List<Issue> findByStatusAndTags(@Param("status") String status, @Param("tagNames") List<Tag> tagNames); //파라미터의 상태와 태그이름이 같은 이슈 조회
+    @Query("SELECT i FROM Issue i JOIN i.tags t WHERE i.status IN :statuses AND t IN :tags")
+    List<Issue> findByStatusesAndTags(@Param("statuses") List<String> statuses, @Param("tags") List<Tag> tags);
 
     List<Issue> findByStatusIn(List<String> statuses);
 

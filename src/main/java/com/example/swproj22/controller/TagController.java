@@ -26,9 +26,9 @@ public class TagController {
         return ResponseEntity.ok(tags);
     }
 
-    @PostMapping("/addTagToIssue")
+    /*@PostMapping("/addTagToIssue")
     public ResponseEntity<Void> assignTagToIssue(@RequestBody TagAddToIssueRequest request) {
         tagService.addTagToIssue(request.getIssueId(), request.getTagId());
         return ResponseEntity.ok().build();
-    }
+    }*/
 }
