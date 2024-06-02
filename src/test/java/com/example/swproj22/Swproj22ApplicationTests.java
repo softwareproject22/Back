@@ -11,6 +11,7 @@ import com.example.swproj22.dto.*;
 import com.example.swproj22.repository.TagRepository;
 import com.example.swproj22.repository.IssueJpaRepository;
 import com.example.swproj22.repository.UserRepository;
+import com.example.swproj22.service.AnalyzeService;
 import com.example.swproj22.service.IssueService;
 import com.example.swproj22.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +19,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -45,7 +49,12 @@ class Swproj22ApplicationTests {
 	@Mock
 	private UserRepository userRepository;
 	@InjectMocks
+	private TagService tagService;
+	@InjectMocks
 	private IssueService issueService;
+
+	@InjectMocks
+	private AnalyzeService analyzeService;
 
 /*Issue Test Code*/
 	private IssueCreateRequest issueCreateRequest;
