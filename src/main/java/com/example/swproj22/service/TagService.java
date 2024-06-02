@@ -20,7 +20,7 @@ public class TagService {
         this.issueRepository = issueRepository;
     }
 
-    public void addTagToIssue(Long issueId, Long tagId) {
+    /*public void addTagToIssue(Long issueId, Long tagId) {
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new RuntimeException("Issue not found"));
         Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new RuntimeException("Tag not found"));
 
@@ -29,7 +29,7 @@ public class TagService {
             issueRepository.save(issue);
         }
 
-    }
+    }*/
 
     public List<Tag> getAllTags() {
         return tagRepository.findAll();
