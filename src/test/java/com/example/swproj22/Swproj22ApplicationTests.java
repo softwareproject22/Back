@@ -233,8 +233,8 @@ class Swproj22ApplicationTests {
 		// Given
 		Long issueId = 1L;
 		IssueMangerChangeRequest issueMangerChangeRequest = IssueMangerChangeRequest.builder()
-				.assignedUserId("newAssignee")
-				.nickname("PL") // Assuming PL user is changing the assignee
+				.nickname("newAssignee")
+				.pl("PL") // Assuming PL user is changing the assignee
 				.build();
 
 		Issue issue = Issue.builder()
@@ -274,8 +274,8 @@ class Swproj22ApplicationTests {
 		// Given
 		Long issueId = 1L;
 		IssueMangerChangeRequest issueMangerChangeRequest = IssueMangerChangeRequest.builder()
-				.assignedUserId("newAssignee")
-				.nickname("Tester") // Assuming Tester user is trying to change the assignee
+				.pl("PL")
+				.nickname("newAssignee") // Assuming Tester user is trying to change the assignee
 				.build();
 
 		Issue issue = Issue.builder()
@@ -289,7 +289,7 @@ class Swproj22ApplicationTests {
 				.build();
 
 		when(issueJpaRepository.findById(issueId)).thenReturn(Optional.of(issue));
-		when(userRepository.findByNickname("Tester")).thenReturn(testerUser);
+		when(userRepository.findByNickname("PL")).thenReturn(testerUser);
 
 		// When & Then
 		IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
@@ -299,9 +299,10 @@ class Swproj22ApplicationTests {
 		assertEquals("Only users with 'PL' role can change assignee.", exception.getMessage());
 
 		verify(issueJpaRepository, times(1)).findById(issueId);
-		verify(userRepository, times(1)).findByNickname("Tester");
+		verify(userRepository, times(1)).findByNickname("PL");
 		verify(issueJpaRepository, never()).save(any(Issue.class)); // Verifying that save method is not called
 	}
+
 
 	/*Fixer 배정 */
 	@Test
