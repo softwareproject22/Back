@@ -76,7 +76,7 @@ public class LoginController {
 
         if(bindingResult.hasErrors()) {
             bindingResult.getFieldErrors().forEach(error -> {
-                response.put(error.getField(), error.getDefaultMessage());
+                response.put("message", error.getDefaultMessage());
             });
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
@@ -125,8 +125,8 @@ public class LoginController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/login/info")
-    public ResponseEntity<?> userInfo(@RequestParam(name = "userId", required = false) Long userId) {
-        User loginUser = userService.getLoginUserById(userId);
+    public ResponseEntity<?> userInfo(@RequestParam(name = "loginId", required = false) String loginId) {
+        User loginUser = userService.getLoginUserByLoginId(loginId);
 
         if (loginUser == null) {
             Map<String, String> response = new HashMap<>();
