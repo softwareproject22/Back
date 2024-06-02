@@ -27,7 +27,8 @@ public class RecommendService {
     }
 
     public List<String> recommendAssigneesByTag(List<Tag> tags) {
-        List<Issue> matchedIssues = issueJpaRepository.findByStatusAndTags("fixed", tags);
+        List<String> statuses = List.of("resolved", "closed");
+        List<Issue> matchedIssues = issueJpaRepository.findByStatusesAndTags(statuses, tags);
         Set<String> busyAssignees = getBusyAssignees();
 
         if (!matchedIssues.isEmpty()) {
@@ -39,22 +40,24 @@ public class RecommendService {
                     .map(User::getNickname)
                     .distinct()
                     .filter(username -> !busyAssignees.contains(username))
+                    .limit(3)
                     .collect(Collectors.toList());
         } else {
             return userRepository.findByRole(UserRole.DEV).stream()
                     .map(User::getNickname)
                     .filter(username -> !busyAssignees.contains(username))
+                    .limit(3)
                     .collect(Collectors.toList());
         }
     }
 
-    private Set<String> getBusyAssignees() {
+    public Set<String> getBusyAssignees() {
         List<Issue> busyIssues = issueJpaRepository.findByStatusIn(List.of("assigned", "resolved"));
         return busyIssues.stream()
-                .map(Issue::getAssignee) // 이 부분에서 String username이 반환됩니다.
-                .map(userRepository::findByNickname) // username으로 User 객체를 찾습니다.
+                .map(Issue::getFixer) // 이 부분에서 String username이 반환됩니다.
+                //.map(userRepository::findByNickname) // username으로 User 객체를 찾습니다.
                 .filter(Objects::nonNull) // null이 아닌 User 객체만 처리
-                .map(User::getNickname) // User 객체에서 nickname을 추출
+                //.map(User::getNickname) // User 객체에서 nickname을 추출
                 .collect(Collectors.toSet());
     }
 }
