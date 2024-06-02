@@ -23,14 +23,14 @@ public class AnalyzeController {
     }
 
     @GetMapping("/daily")
-    public ResponseEntity<List<IssueCountRequest>> getDailyIssueCounts() {
-        List<IssueCountRequest> dailyCounts = analyzeService.countIssuesByDay();
+    public ResponseEntity<Map<Integer, Long>> getDailyIssueCounts() {
+        Map<Integer, Long> dailyCounts = analyzeService.countIssuesByDay();
         return ResponseEntity.ok(dailyCounts);
     }
 
     @GetMapping("/monthly")
-    public ResponseEntity<List<IssueCountRequest>> getMonthlyIssueCounts() {
-        List<IssueCountRequest> monthlyCounts = analyzeService.countIssuesByMonth();
+    public ResponseEntity<Map<String, Long>> getMonthlyIssueCounts() {
+        Map<String, Long> monthlyCounts = analyzeService.countIssuesByMonth();
         return ResponseEntity.ok(monthlyCounts);
     }
 

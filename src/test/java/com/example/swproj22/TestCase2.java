@@ -43,7 +43,6 @@ public class TestCase2 {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Mock 데이터 설정
         Tag tag1 = new Tag();
         tag1.setId(1L);
         tag1.setCategory("bug");
@@ -60,18 +59,18 @@ public class TestCase2 {
     public void testCountIssuesByDay() {
         List<Object[]> mockResults = Arrays.asList(
                 new Object[]{"2024-05-01", 5L},
-                new Object[]{"2024-05-02", 3L}
+                new Object[]{"2024-05-02", 3L},
+                new Object[]{"2024-05-03", 8L}
         );
 
         when(issueJpaRepository.countIssuesByDayUsingCast()).thenReturn(mockResults);
 
-        List<IssueCountRequest> result = analyzeService.countIssuesByDay();
+        Map<Integer, Long> result = analyzeService.countIssuesByDay();
 
-        assertEquals(2, result.size());
-        assertEquals("2024-05-01", result.get(0).getDate());
-        assertEquals(5L, result.get(0).getIssues());
-        assertEquals("2024-05-02", result.get(1).getDate());
-        assertEquals(3L, result.get(1).getIssues());
+        assertEquals(3, result.size());
+        assertEquals(5L, result.get(1));
+        assertEquals(3L, result.get(2));
+        assertEquals(8L, result.get(3));
     }
 
     @Test
@@ -83,13 +82,11 @@ public class TestCase2 {
 
         when(issueJpaRepository.countIssuesByMonth()).thenReturn(mockResults);
 
-        List<IssueCountRequest> result = analyzeService.countIssuesByMonth();
+        Map<String, Long> result = analyzeService.countIssuesByMonth();
 
         assertEquals(2, result.size());
-        assertEquals("2024-05", result.get(0).getDate());
-        assertEquals(10L, result.get(0).getIssues());
-        assertEquals("2024-06", result.get(1).getDate());
-        assertEquals(15L, result.get(1).getIssues());
+        assertEquals(10L, result.get("2024-06"));
+        assertEquals(15L, result.get("2024-07"));
     }
 
     @Test
@@ -123,21 +120,9 @@ public class TestCase2 {
         assertEquals(12L, result.get("bug"));
         assertEquals(8L, result.get("feature"));
     }
-    /*
-    AnalyzeService 클래스의 메소드를 테스트하여 각 메소드가 의도한 대로 동작하는지 확인하고,
-    주어진 데이터를 기반으로 올바른 결과를 반환하는지 검증합니다.
-    이 테스트는 서비스 계층의 비즈니스 로직이 예상대로 작동하는지 확인하기 위한 것입니다.
-    */
-
 
     @Test
     public void testGetAllTags() {
-        /*
-        TagService 클래스의 메소드들이 의도한 대로 동작하는지 확인하기 위해 테스트 코드를 작성합니다.
-        특히, getAllTags 메소드가 tagRepository로부터 모든 태그 목록을 올바르게 반환하는지 확인합니다.
-        이 테스트는 TagRepository가 실제로 동작하지 않고, Mock 객체를 사용하여 테스트합니다.
-        이를 통해 데이터베이스에 대한 의존성을 제거하고, 단위 테스트를 보다 빠르고 안전하게 수행할 수 있습니다.
-         */
         List<Tag> tags = tagService.getAllTags();
 
         assertNotNull(tags);
@@ -209,13 +194,5 @@ public class TestCase2 {
         assertTrue(busyAssignees.contains("dev1"));
         assertTrue(busyAssignees.contains("dev2"));
     }
-    /*
-    RecommendService 클래스의 메소드들이 의도한 대로 동작하는지 확인하기 위해 테스트 코드를 작성합니다.
-    특히, recommendAssigneesByTag 메소드와 getBusyAssignees 메소드가 올바르게 작동하는지 검증합니다.
-    이 테스트는 IssueJpaRepository와 UserRepository가 실제로 동작하지 않고, Mock 객체를 사용하여 테스트합니다.
-    이를 통해 데이터베이스에 대한 의존성을 제거하고, 단위 테스트를 보다 빠르고 안전하게 수행할 수 있습니다.
-    태그가 포함된 이슈가 있을 때 recommendAssigneesByTag 메소드가 올바르게 작동하는지 테스트합니다.
-    태그가 포함된 이슈가 없을 때 recommendAssigneesByTag 메소드가 올바르게 작동하는지 테스트합니다.
-    getBusyAssignees 메소드가 올바르게 작동하여 assigned 또는 resolved 상태인 이슈의 fixer를 반환하는지 테스트합니다.
-     */
+
 }
