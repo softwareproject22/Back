@@ -1,5 +1,7 @@
 package com.example.swproj22;
 
+
+
 import com.example.swproj22.bootstrap.TagLoader;
 import com.example.swproj22.domain.Issue;
 import com.example.swproj22.domain.Tag;
@@ -54,7 +56,7 @@ class Swproj22ApplicationTests {
 	@InjectMocks
 	private AnalyzeService analyzeService;
 
-	/*Issue Test Code*/
+/*Issue Test Code*/
 	private IssueCreateRequest issueCreateRequest;
 	private Tag tag1;
 	private Tag tag2;
@@ -63,7 +65,6 @@ class Swproj22ApplicationTests {
 	void setUp() {
 		tag1 = new Tag(1L, "tag1");
 		tag2 = new Tag(2L, "tag2");
-		MockitoAnnotations.openMocks(this);
 
 		List<Long> tagIds = Arrays.asList(1L, 2L);
 		issueCreateRequest = IssueCreateRequest.builder()
@@ -79,7 +80,7 @@ class Swproj22ApplicationTests {
 		when(tagRepository.findById(1L)).thenReturn(Optional.of(tag1));
 		when(tagRepository.findById(2L)).thenReturn(Optional.of(tag2));
 	}
-	/*이슈 생성 */
+/*이슈 생성 */
 	@Test
 	void createIssue_success() {
 		Issue expectedIssue = Issue.builder()
@@ -238,8 +239,8 @@ class Swproj22ApplicationTests {
 		// Given
 		Long issueId = 1L;
 		IssueMangerChangeRequest issueMangerChangeRequest = IssueMangerChangeRequest.builder()
-				.nickname("newAssignee")
-				.pl("PL") // Assuming PL user is changing the assignee
+				.assignedUserId("newAssignee")
+				.nickname("PL") // Assuming PL user is changing the assignee
 				.build();
 
 		Issue issue = Issue.builder()
@@ -279,8 +280,8 @@ class Swproj22ApplicationTests {
 		// Given
 		Long issueId = 1L;
 		IssueMangerChangeRequest issueMangerChangeRequest = IssueMangerChangeRequest.builder()
-				.pl("PL")
-				.nickname("newAssignee") // Assuming Tester user is trying to change the assignee
+				.assignedUserId("newAssignee")
+				.nickname("Tester") // Assuming Tester user is trying to change the assignee
 				.build();
 
 		Issue issue = Issue.builder()
@@ -294,7 +295,7 @@ class Swproj22ApplicationTests {
 				.build();
 
 		when(issueJpaRepository.findById(issueId)).thenReturn(Optional.of(issue));
-		when(userRepository.findByNickname("PL")).thenReturn(testerUser);
+		when(userRepository.findByNickname("Tester")).thenReturn(testerUser);
 
 		// When & Then
 		IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
@@ -304,10 +305,9 @@ class Swproj22ApplicationTests {
 		assertEquals("Only users with 'PL' role can change assignee.", exception.getMessage());
 
 		verify(issueJpaRepository, times(1)).findById(issueId);
-		verify(userRepository, times(1)).findByNickname("PL");
+		verify(userRepository, times(1)).findByNickname("Tester");
 		verify(issueJpaRepository, never()).save(any(Issue.class)); // Verifying that save method is not called
 	}
-
 
 	/*Fixer 배정 */
 	@Test
