@@ -59,18 +59,18 @@ public class TestCase2 {
     public void testCountIssuesByDay() {
         List<Object[]> mockResults = Arrays.asList(
                 new Object[]{"2024-05-01", 5L},
-                new Object[]{"2024-05-02", 3L}
+                new Object[]{"2024-05-02", 3L},
+                new Object[]{"2024-05-03", 8L}
         );
 
         when(issueJpaRepository.countIssuesByDayUsingCast()).thenReturn(mockResults);
 
-        List<IssueCountRequest> result = analyzeService.countIssuesByDay();
+        Map<Integer, Long> result = analyzeService.countIssuesByDay();
 
-        assertEquals(2, result.size());
-        assertEquals("2024-05-01", result.get(0).getDate());
-        assertEquals(5L, result.get(0).getIssues());
-        assertEquals("2024-05-02", result.get(1).getDate());
-        assertEquals(3L, result.get(1).getIssues());
+        assertEquals(3, result.size());
+        assertEquals(5L, result.get(1));
+        assertEquals(3L, result.get(2));
+        assertEquals(8L, result.get(3));
     }
 
     @Test
@@ -82,13 +82,11 @@ public class TestCase2 {
 
         when(issueJpaRepository.countIssuesByMonth()).thenReturn(mockResults);
 
-        List<IssueCountRequest> result = analyzeService.countIssuesByMonth();
+        Map<String, Long> result = analyzeService.countIssuesByMonth();
 
         assertEquals(2, result.size());
-        assertEquals("2024-05", result.get(0).getDate());
-        assertEquals(10L, result.get(0).getIssues());
-        assertEquals("2024-06", result.get(1).getDate());
-        assertEquals(15L, result.get(1).getIssues());
+        assertEquals(10L, result.get("2024-06"));
+        assertEquals(15L, result.get("2024-07"));
     }
 
     @Test
@@ -196,4 +194,5 @@ public class TestCase2 {
         assertTrue(busyAssignees.contains("dev1"));
         assertTrue(busyAssignees.contains("dev2"));
     }
+
 }
