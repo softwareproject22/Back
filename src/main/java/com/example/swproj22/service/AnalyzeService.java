@@ -20,21 +20,22 @@ public class AnalyzeService {
         this.issueJpaRepository = issueJpaRepository;
     }
 
-    public List<IssueCountRequest> countIssuesByDay() {
+    public Map<Integer, Long> countIssuesByDay() {
         List<Object[]> results = issueJpaRepository.countIssuesByDayUsingCast();
-        List<IssueCountRequest> dailyCounts = new ArrayList<>();
+        Map<Integer, Long> dailyCounts = new HashMap<>();
         for (Object[] result : results) {
-            dailyCounts.add(new IssueCountRequest(result[0].toString(), (Long) result[1]));
+            Integer day = Integer.parseInt(result[0].toString().split("-")[2]);
+            dailyCounts.put(day, (Long) result[1]);
         }
         return dailyCounts;
     }
 
-    public List<IssueCountRequest> countIssuesByMonth() {
+    public Map<String, Long> countIssuesByMonth() {
         List<Object[]> results = issueJpaRepository.countIssuesByMonth();
-        List<IssueCountRequest> monthlyCounts = new ArrayList<>();
+        Map<String, Long> monthlyCounts = new HashMap<>();
         for (Object[] result : results) {
             String yearMonth = result[0] + "-" + String.format("%02d", result[1]);
-            monthlyCounts.add(new IssueCountRequest(yearMonth, (Long) result[2]));
+            monthlyCounts.put(yearMonth, (Long) result[2]);
         }
         return monthlyCounts;
     }
@@ -56,6 +57,5 @@ public class AnalyzeService {
         }
         return tagCounts;
     }
-
 
 }
