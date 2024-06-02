@@ -1,7 +1,5 @@
 package com.example.swproj22;
 
-
-
 import com.example.swproj22.bootstrap.TagLoader;
 import com.example.swproj22.domain.Issue;
 import com.example.swproj22.domain.Tag;
@@ -56,7 +54,7 @@ class Swproj22ApplicationTests {
 	@InjectMocks
 	private AnalyzeService analyzeService;
 
-/*Issue Test Code*/
+	/*Issue Test Code*/
 	private IssueCreateRequest issueCreateRequest;
 	private Tag tag1;
 	private Tag tag2;
@@ -81,7 +79,7 @@ class Swproj22ApplicationTests {
 		when(tagRepository.findById(1L)).thenReturn(Optional.of(tag1));
 		when(tagRepository.findById(2L)).thenReturn(Optional.of(tag2));
 	}
-/*이슈 생성 */
+	/*이슈 생성 */
 	@Test
 	void createIssue_success() {
 		Issue expectedIssue = Issue.builder()
