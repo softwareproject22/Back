@@ -27,20 +27,17 @@ public class RecommendService {
     }
 
     public List<String> recommendAssigneesByTag(List<Tag> tags) {
-        List<String> statuses = List.of("resolved", "closed");
+        List<String> statuses = List.of("resolved", "closed"); 
         List<Issue> matchedIssues = issueJpaRepository.findByStatusesAndTags(statuses, tags);
         Set<String> busyAssignees = getBusyAssignees();
 
-        if (!matchedIssues.isEmpty()) {
+        if (!matchedIssues.isEmpty()) { //resolved, closed상태인 이슈에 해당 태그가 존재하면
             return matchedIssues.stream()
-                    .map(Issue::getAssignee)
-                    .map(userRepository::findByNickname) // User 객체를 직접 반환한다고 가정
-                    .filter(Objects::nonNull) // null이 아닌 User 객체만 처리
-                    .filter(user -> user.getRole() == UserRole.DEV) // Role이 DEV인 사용자만 필터링
-                    .map(User::getNickname)
+                    .map(Issue::getFixer) //해당 이슈의 fixer를 받아옴
+                    .filter(Objects::nonNull)
                     .distinct()
                     .filter(username -> !busyAssignees.contains(username))
-                    .limit(3)
+                    .limit(3) //최대 3명까지 추천
                     .collect(Collectors.toList());
         } else {
             return userRepository.findByRole(UserRole.DEV).stream()
@@ -52,12 +49,11 @@ public class RecommendService {
     }
 
     public Set<String> getBusyAssignees() {
-        List<Issue> busyIssues = issueJpaRepository.findByStatusIn(List.of("assigned", "resolved"));
+        List<Issue> busyIssues = issueJpaRepository.findByStatusIn(List.of("assigned"));
         return busyIssues.stream()
-                .map(Issue::getFixer) // 이 부분에서 String username이 반환됩니다.
-                //.map(userRepository::findByNickname) // username으로 User 객체를 찾습니다.
-                .filter(Objects::nonNull) // null이 아닌 User 객체만 처리
-                //.map(User::getNickname) // User 객체에서 nickname을 추출
+                .map(Issue::getAssignee)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
+
 }
