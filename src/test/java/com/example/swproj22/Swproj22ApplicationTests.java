@@ -239,7 +239,7 @@ class Swproj22ApplicationTests {
 		// Given
 		Long issueId = 1L;
 		IssueMangerChangeRequest issueMangerChangeRequest = IssueMangerChangeRequest.builder()
-				.assignedUserId("newAssignee")
+				.pl("newAssignee")
 				.nickname("PL") // Assuming PL user is changing the assignee
 				.build();
 
@@ -280,7 +280,7 @@ class Swproj22ApplicationTests {
 		// Given
 		Long issueId = 1L;
 		IssueMangerChangeRequest issueMangerChangeRequest = IssueMangerChangeRequest.builder()
-				.assignedUserId("newAssignee")
+				.pl("newAssignee")
 				.nickname("Tester") // Assuming Tester user is trying to change the assignee
 				.build();
 

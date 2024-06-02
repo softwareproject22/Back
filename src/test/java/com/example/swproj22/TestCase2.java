@@ -18,10 +18,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class TestCase2 {
 
@@ -76,8 +77,8 @@ public class TestCase2 {
     @Test
     public void testCountIssuesByMonth() {
         List<Object[]> mockResults = Arrays.asList(
-                new Object[]{"2024", 5, 10L},
-                new Object[]{"2024", 6, 15L}
+                new Object[]{"2024", 6, 10L},
+                new Object[]{"2024", 7, 15L}
         );
 
         when(issueJpaRepository.countIssuesByMonth()).thenReturn(mockResults);
@@ -133,66 +134,93 @@ public class TestCase2 {
 
 
     @Test
-    public void testRecommendAssigneesByTag_WithMatchedIssues() {
-        Tag tag1 = new Tag();
-        tag1.setId(1L);
-        tag1.setCategory("bug");
+    public void testRecommendAssigneesByTag_withResolvedIssues_andBusyAssignees() {
+        Tag tag = new Tag();
+        tag.setCategory("bug");
 
         Issue issue1 = new Issue();
-        issue1.setAssignee("dev1");
-        issue1.setTags(Collections.singletonList(tag1));
-        issue1.setStatus("resolved");
+        issue1.setFixer("user1");
 
-        User user1 = new User();
-        user1.setNickname("dev1");
-        user1.setRole(UserRole.DEV);
+        Issue issue2 = new Issue();
+        issue2.setFixer("user2");
 
-        when(issueJpaRepository.findByStatusesAndTags(anyList(), anyList())).thenReturn(Collections.singletonList(issue1));
-        when(userRepository.findByNickname("dev1")).thenReturn(user1);
+        List<Issue> issues = Arrays.asList(issue1, issue2);
 
-        List<String> recommendedAssignees = recommendService.recommendAssigneesByTag(Collections.singletonList(tag1));
+        // "assigned" 상태의 이슈를 담당하고 있는 assignee
+        Issue busyIssue = new Issue();
+        busyIssue.setAssignee("user2");
 
-        assertEquals(1, recommendedAssignees.size());
-        assertEquals("dev1", recommendedAssignees.get(0));
+        List<Issue> busyIssues = Collections.singletonList(busyIssue);
+
+        when(issueJpaRepository.findByStatusesAndTags(Arrays.asList("resolved", "closed"), Collections.singletonList(tag)))
+                .thenReturn(issues);
+        when(issueJpaRepository.findByStatusIn(Collections.singletonList("assigned")))
+                .thenReturn(busyIssues);
+        when(userRepository.findByNickname("user1")).thenReturn(new User());
+        when(userRepository.findByNickname("user2")).thenReturn(new User());
+
+        List<String> result = recommendService.recommendAssigneesByTag(Collections.singletonList(tag));
+
+        assertEquals(1, result.size());
+        assertEquals("user1", result.get(0));  // busyAssignees에 포함되지 않은 user1만 추천됨
     }
 
+
     @Test
-    public void testRecommendAssigneesByTag_WithoutMatchedIssues() {
+    public void testRecommendAssigneesByTag_noResolvedIssues_andBusyAssignees() {
+        Tag tag = new Tag();
+        tag.setCategory("bug");
+
         User user1 = new User();
-        user1.setNickname("dev1");
+        user1.setNickname("user1");
         user1.setRole(UserRole.DEV);
 
         User user2 = new User();
-        user2.setNickname("dev2");
+        user2.setNickname("user2");
         user2.setRole(UserRole.DEV);
 
-        when(issueJpaRepository.findByStatusesAndTags(anyList(), anyList())).thenReturn(Collections.emptyList());
+        when(issueJpaRepository.findByStatusesAndTags(Arrays.asList("resolved", "closed"), Collections.singletonList(tag)))
+                .thenReturn(Collections.emptyList());
         when(userRepository.findByRole(UserRole.DEV)).thenReturn(Arrays.asList(user1, user2));
 
-        List<String> recommendedAssignees = recommendService.recommendAssigneesByTag(Collections.emptyList());
+        // "assigned" 상태의 이슈를 담당하고 있는 assignee
+        Issue busyIssue = new Issue();
+        busyIssue.setAssignee("user2");
+        List<Issue> busyIssues = Collections.singletonList(busyIssue);
+        when(issueJpaRepository.findByStatusIn(Collections.singletonList("assigned")))
+                .thenReturn(busyIssues);
 
-        assertEquals(2, recommendedAssignees.size());
-        assertTrue(recommendedAssignees.contains("dev1"));
-        assertTrue(recommendedAssignees.contains("dev2"));
+        List<String> result = recommendService.recommendAssigneesByTag(Collections.singletonList(tag));
+
+        assertEquals(1, result.size()); // busyAssignee가 제외되었는지 확인
+        assertEquals("user1", result.get(0)); // busyAssignee가 아닌 user1이 추천되었는지 확인
     }
 
+
     @Test
-    public void testGetBusyAssignees() {
-        Issue issue1 = new Issue();
-        issue1.setFixer("dev1");
-        issue1.setStatus("assigned");
+    public void testGetBusyAssignees_withMixedStatuses() {
+        Issue assignedIssue = new Issue();
+        assignedIssue.setAssignee("user1");
+        assignedIssue.setStatus("assigned");
 
-        Issue issue2 = new Issue();
-        issue2.setFixer("dev2");
-        issue2.setStatus("resolved");
+        Issue closedIssue = new Issue();
+        closedIssue.setAssignee("user2");
+        closedIssue.setStatus("closed");
 
-        when(issueJpaRepository.findByStatusIn(anyList())).thenReturn(Arrays.asList(issue1, issue2));
+        Issue resolvedIssue = new Issue();
+        resolvedIssue.setAssignee("user3");
+        resolvedIssue.setStatus("resolved");
 
-        Set<String> busyAssignees = recommendService.getBusyAssignees();
+        List<Issue> issues = Arrays.asList(assignedIssue, closedIssue, resolvedIssue);
+        when(issueJpaRepository.findByStatusIn(Collections.singletonList("assigned")))
+                .thenReturn(issues.stream().filter(issue -> "assigned".equals(issue.getStatus())).collect(Collectors.toList()));
 
-        assertEquals(2, busyAssignees.size());
-        assertTrue(busyAssignees.contains("dev1"));
-        assertTrue(busyAssignees.contains("dev2"));
+        Set<String> result = recommendService.getBusyAssignees();
+
+        assertEquals(1, result.size());
+        assertTrue(result.contains("user1"));  // "assigned" 상태의 담당자만 포함되어야 함
+        assertFalse(result.contains("user2")); // "closed" 상태의 담당자는 포함되지 않아야 함
+        assertFalse(result.contains("user3")); // "resolved" 상태의 담당자는 포함되지 않아야 함
     }
 
 }
