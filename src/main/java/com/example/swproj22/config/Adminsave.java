@@ -16,7 +16,7 @@ public class Adminsave {
             if (!userRepository.existsByLoginId("admin")) {
                 User user = User.builder()
                         .loginId("admin")
-                        .password("1234")
+                        .password("thdnprhd22")
                         .nickname("a")
                         .role(UserRole.ADMIN)
                         .build();
