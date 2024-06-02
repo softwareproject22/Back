@@ -18,6 +18,7 @@ public interface IssueJpaRepository extends JpaRepository<Issue, Long> {
 
     List<Issue> findByProjectIdAndReporter(Long projectId, String reporter);
 
+    @Query("SELECT i FROM Issue i WHERE i.projectId = ?1 AND i.assignee = ?2 AND i.status != 'fixed'")
     List<Issue> findByProjectIdAndAssignee(Long projectId, String assignee);
 
     @Query("SELECT i FROM Issue i JOIN i.tags t WHERE i.status IN :statuses AND t IN :tags")
